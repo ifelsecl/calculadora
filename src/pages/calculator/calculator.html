@@ -1,0 +1,323 @@
+<!--
+  Generated template for the CalculatorPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+    <ion-navbar hideBackButton="true" >
+        <ion-buttons left>
+            <button ion-button icon-only (click)="prevSlide()" *ngIf="!showResult">
+                <ion-icon name="arrow-back"></ion-icon>
+              </button>
+              <button ion-button icon-only (click)="edit()" *ngIf="showResult">
+                  Editar
+                </button>
+          </ion-buttons>
+        
+    
+        <ion-title>
+          Calculadora
+        </ion-title>
+    
+        <ion-buttons end>
+          <button ion-button icon-only (click)="nextSlide()" *ngIf="!showResult && !showCalculate">
+            <ion-icon name="arrow-forward"></ion-icon>
+          </button>
+          <button ion-button icon-only (click)="calculate(ngForm)" *ngIf="showCalculate">
+              Calcular
+            </button>
+          <button ion-button icon-only (click)="createPerson()" *ngIf="showResult">
+            Guardar
+          </button>
+        </ion-buttons>
+      </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+  <form #form="ngForm">
+      <ion-slides pager (ionSlideDidChange)="slideChanged()">
+          <ion-slide>
+              <div>
+                <img src="assets/imgs/datos.png" style="width:100% !important;"  >
+              </div>
+              <ion-list>
+                <ion-item>
+                    <ion-label>Nombre</ion-label>
+                    <ion-input [(ngModel)]="name" name="name" type="text"></ion-input>
+                  </ion-item>
+                  <ion-item>
+                      <ion-label>Fecha de nacimiento</ion-label>
+                      <ion-datetime displayFormat="DD/MMM/YYYY" min="1970" max="2020-10-31" [(ngModel)]="birthday" name="birthday"></ion-datetime>
+                    </ion-item>
+                  <ion-item>
+                    <ion-label>Género</ion-label>
+                    <ion-select action-sheet [(ngModel)]="genre" name="genre">
+                      <ion-option value="male" selected>Masculino</ion-option>
+                      <ion-option value="female">Femenino</ion-option>
+                      
+                    </ion-select>
+                  </ion-item>
+                  <ion-item>
+                      <ion-label>Email</ion-label>
+                      <ion-input type="email"  name="email"  [(ngModel)]="email"></ion-input>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label>Télefono</ion-label>
+                        <ion-input type="tel"  name="phone"  [(ngModel)]="phone"></ion-input>
+                      </ion-item>
+                      <ion-item>
+                        <ion-label>País</ion-label>
+                        <ion-input type="text"  name="country"  [(ngModel)]="country"></ion-input>
+                      </ion-item>
+                </ion-list>
+          </ion-slide>
+              <ion-slide>
+                  <div>
+                    <img src="assets/imgs/medidas.png" style="width:100% !important;"  >
+                  </div>
+    
+                  <ion-list>
+                    <ion-item>
+                        <ion-label>Peso</ion-label>
+                        <ion-input type="number"  name="weight"  [(ngModel)]="weight"></ion-input>
+                      </ion-item>
+                    
+                      <ion-item>
+                        <ion-label>Altura</ion-label>
+                        <ion-input type="number"  name="height"  [(ngModel)]="height"></ion-input>
+                      </ion-item>
+
+                      <ion-item>
+                          <ion-label>Cuello</ion-label>
+                          <ion-input type="number" name="neck" [(ngModel)]="neck"></ion-input>
+                        </ion-item>
+                      
+                      <ion-item>
+                          <ion-label>Cintura</ion-label>
+                          <ion-input type="number" name="waist" [(ngModel)]="waist"></ion-input>
+                        </ion-item>
+
+                        <ion-item *ngIf="genre == 'female'">
+                            <ion-label>Cadera</ion-label>
+                            <ion-input type="number" [(ngModel)]="hip"></ion-input>
+                          </ion-item>
+
+                          <ion-item>
+                              <ion-label>Actividad Fisica</ion-label>
+                              <ion-select [(ngModel)]="performance" name="performance">
+                                <ion-option value="0" selected>Nada</ion-option>
+                                <ion-option value="1">Ligera</ion-option>
+                                <ion-option value="2">Moderada</ion-option>
+                                <ion-option value="3">Fuerte</ion-option>
+                                <ion-option value="4">Brutal</ion-option>
+                              </ion-select>
+                          </ion-item>
+                    </ion-list>
+          
+              </ion-slide>
+
+              <ion-slide>
+                <div>
+                  <img src="assets/imgs/habitos.png" style="width:100% !important;"  >
+                </div>
+    
+                  <ion-list>
+                    <ion-item>
+                        <ion-label>Comidas al dia</ion-label>
+                        <ion-input type="number" name="foods" [(ngModel)]="foods"></ion-input>
+                      </ion-item>
+                    
+                      <ion-item>
+                        <ion-label>Que comes generalmente?</ion-label>
+                        <ion-input type="text" name="eat" [(ngModel)]="eat"></ion-input>
+                      </ion-item>
+                      <ion-item>
+                          <ion-label>Has hecho dieta antes?</ion-label>
+                          <ion-toggle [(ngModel)]="diet" name="diet"></ion-toggle>
+                      </ion-item>
+                      <ion-item>
+                          <ion-label>Has tomado suplementos?</ion-label>
+                          <ion-toggle [(ngModel)]="supplements" name="supplements"></ion-toggle>
+                      </ion-item>
+                      <ion-item>
+                          <ion-label>Casa o Gym</ion-label>
+                          <ion-toggle [(ngModel)]="place" name="place"></ion-toggle>
+                      </ion-item>
+                      <ion-item>
+                          <ion-label>Tienes alguna lesión?</ion-label>
+                          <ion-toggle [(ngModel)]="injury" name="injury"></ion-toggle>
+                      </ion-item>
+
+                    </ion-list>
+          
+              </ion-slide>
+
+        <ion-slide *ngIf="showLastPage">
+            <div>
+                <img src="assets/imgs/resultados.png" style="width:100% !important;"  >
+              </div>
+          <ion-list no-border class="result">
+
+            <ion-list-header>
+              Resultados
+            </ion-list-header>
+        
+            <ion-item>
+              <ion-icon name='analytics' item-start></ion-icon>
+              Porcentaje de Grasa
+              <ion-note item-end>
+              {{fat}} %
+              </ion-note>
+            </ion-item>
+        
+            <ion-item>
+              <ion-icon name='analytics' item-start></ion-icon>
+              IMC
+              <ion-note item-end>
+                {{imc}}
+              </ion-note>
+            </ion-item>
+        
+            <ion-item>
+              <ion-icon name='analytics' item-start></ion-icon>
+              TMB
+              <ion-note item-end>
+                {{tmb}} kCal
+              </ion-note>
+            </ion-item>
+          </ion-list>
+        
+        
+          <ion-list>
+        
+            <ion-list-header>
+              Datos
+            </ion-list-header>
+        
+            <ion-item>
+              <ion-icon name='contact' item-start></ion-icon>
+              Nombre
+              <ion-note item-end>{{name}}</ion-note>
+            </ion-item>
+        
+            <ion-item>
+              <ion-icon name='calendar' item-start></ion-icon>
+              Fecha de Nacimiento
+              <ion-note item-end>{{birthday | date:'dd/MMM/yyyy'}}</ion-note>
+            </ion-item>
+        
+            <ion-item>
+              <ion-icon name='speedometer' item-start></ion-icon>
+              Edad
+              <ion-note item-end>{{getAge(birthday)}}</ion-note>
+            </ion-item>
+        
+            <ion-item>
+              <ion-icon name='man' item-start></ion-icon>
+              Género
+              <ion-note item-end>{{(genre == 'male') ? "Masculino" : "Femenino"}}</ion-note>
+            </ion-item>
+        
+            <ion-item>
+              <ion-icon name='at' item-start></ion-icon>
+              Email
+              <ion-note item-end>{{email}}</ion-note>
+            </ion-item>
+
+            <ion-item>
+                <ion-icon name='pin' item-start></ion-icon>
+                País
+                <ion-note item-end>{{country}}</ion-note>
+              </ion-item>
+        
+            <ion-item>
+              <ion-icon name='call' item-start></ion-icon>
+              Télefono
+              <ion-note item-end>{{phone}}</ion-note>
+            </ion-item>
+        
+            <ion-item>
+              <ion-icon name='analytics' item-start></ion-icon>
+              Peso
+              <ion-note item-end>{{weight}}</ion-note>
+            </ion-item>
+            
+            <ion-item>
+              <ion-icon name='analytics' item-start></ion-icon>
+              Altura
+              <ion-note item-end>{{height}}</ion-note>
+            </ion-item>
+        
+            <ion-item>
+              <ion-icon name='analytics' item-start></ion-icon>
+              Cuello
+              <ion-note item-end>{{neck}}</ion-note>
+            </ion-item>
+        
+            <ion-item>
+              <ion-icon name='analytics' item-start></ion-icon>
+              Cintura
+              <ion-note item-end>{{waist}}</ion-note>
+            </ion-item>
+        
+            <ion-item *ngIf="genre == 'female'">
+              <ion-icon name='analytics' item-start></ion-icon>
+              Cadera
+              <ion-note item-end>{{hip}}</ion-note>
+            </ion-item>
+        
+            <ion-item>
+              <ion-icon name='pulse' item-start></ion-icon>
+              Actividad Fisica
+              <ion-note item-end>{{performance}}</ion-note>
+            </ion-item>
+        
+            <ion-item>
+              <ion-icon name='restaurant' item-start></ion-icon>
+              Comidas al día
+              <ion-note item-end>{{foods}}</ion-note>
+            </ion-item>
+        
+            <ion-item>
+              <ion-icon name='pizza' item-start></ion-icon>
+              Habito alimenticio
+              <ion-note item-end>{{eat}}</ion-note>
+            </ion-item>
+        
+            <ion-item>
+              <ion-icon name='walk' item-start></ion-icon>
+              Sitio de entreno
+              <ion-note item-end>{{place == true ? "Gym" : "Casa"}}</ion-note>
+            </ion-item>
+        
+            <ion-item>
+              <ion-toggle  [(ngModel)]="diet" [ngModelOptions]="{standalone: true}" disabled="true"></ion-toggle>
+              <ion-label>
+                Dieta anteriormente
+              </ion-label>
+              <ion-icon name='restaurant' item-start></ion-icon>
+            </ion-item>
+        
+            <ion-item>
+              <ion-toggle  [(ngModel)]="supplements" [ngModelOptions]="{standalone: true}" disabled="true"></ion-toggle>
+              <ion-label>
+                Suplementación
+              </ion-label>
+              <ion-icon name='flash' item-start></ion-icon>
+            </ion-item>
+        
+            <ion-item>
+              <ion-toggle [(ngModel)]="injury" [ngModelOptions]="{standalone: true}" disabled="true"></ion-toggle>
+              <ion-label>
+                Lesión
+              </ion-label>
+              <ion-icon name='medkit' item-start></ion-icon>
+            </ion-item>
+          </ion-list>
+        </ion-slide>
+      </ion-slides>
+    </form>
+    </ion-content>

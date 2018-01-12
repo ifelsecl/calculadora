@@ -1,0 +1,29 @@
+ion-slide{
+    ion-list{
+        height: 45vh;
+        overflow-y: scroll;
+    }
+}
+
+ion-slides { height: initial; }
+
+.item-input .label-md, .item-select .label-md, .item-datetime .label-md,  {
+    color: initial;
+}
+
+.toggle-md.toggle-disabled, .item-md.item-toggle-disabled ion-label{
+    opacity: 1;
+}
+
+ion-list{
+    padding: 35px 20px;
+}
+
+.result{
+    height: auto !important;
+    margin-bottom: 0 !important;
+}
+
+ion-icon{
+    color: #c7c7c7 !important;
+}
