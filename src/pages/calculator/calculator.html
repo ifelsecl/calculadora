@@ -28,7 +28,7 @@
           <button ion-button icon-only (click)="calculate(ngForm)" *ngIf="showCalculate">
               Calcular
             </button>
-          <button ion-button icon-only (click)="createPerson()" *ngIf="showResult">
+          <button ion-button icon-only (click)="save()" *ngIf="showResult">
             Guardar
           </button>
         </ion-buttons>
@@ -82,17 +82,33 @@
                   <ion-list>
                     <ion-item>
                         <ion-label>Peso</ion-label>
-                        <ion-input type="number"  name="weight"  [(ngModel)]="weight"></ion-input>
+                        <ion-input type="number" required  name="weight"  [(ngModel)]="weight"></ion-input>
                       </ion-item>
                     
                       <ion-item>
                         <ion-label>Altura</ion-label>
-                        <ion-input type="number"  name="height"  [(ngModel)]="height"></ion-input>
+                        <ion-input type="number" required  name="height"  [(ngModel)]="height"></ion-input>
                       </ion-item>
 
                       <ion-item>
                           <ion-label>Cuello</ion-label>
-                          <ion-input type="number" name="neck" [(ngModel)]="neck"></ion-input>
+                          <ion-input type="number"  name="neck" [(ngModel)]="neck"></ion-input>
+                        </ion-item>
+
+                        <ion-item>
+                          <ion-label>Pecho</ion-label>
+                          <ion-input type="number" name="chest" [(ngModel)]="chest"></ion-input>
+                        </ion-item>
+
+
+                        <ion-item>
+                          <ion-label>Bicep Izq</ion-label>
+                          <ion-input type="number" name="armL" [(ngModel)]="armL"></ion-input>
+                        </ion-item>
+
+                        <ion-item>
+                          <ion-label>Bicep Der</ion-label>
+                          <ion-input type="number" name="armR" [(ngModel)]="armR"></ion-input>
                         </ion-item>
                       
                       <ion-item>
@@ -102,7 +118,27 @@
 
                         <ion-item *ngIf="genre == 'female'">
                             <ion-label>Cadera</ion-label>
-                            <ion-input type="number" [(ngModel)]="hip"></ion-input>
+                            <ion-input type="number" name="hip" [(ngModel)]="hip"></ion-input>
+                          </ion-item>
+
+                          <ion-item>
+                            <ion-label>Muslo Izq</ion-label>
+                            <ion-input type="number" name="legL" [(ngModel)]="legL"></ion-input>
+                          </ion-item>
+  
+                          <ion-item>
+                            <ion-label>Muslo Der</ion-label>
+                            <ion-input type="number" name="legR" [(ngModel)]="legR"></ion-input>
+                          </ion-item>
+  
+                          <ion-item>
+                            <ion-label>Pantorrilla Izq</ion-label>
+                            <ion-input type="number" name="calfL" [(ngModel)]="calfL"></ion-input>
+                          </ion-item>
+  
+                          <ion-item>
+                            <ion-label>Pantorrilla Der</ion-label>
+                            <ion-input type="number" name="calfR" [(ngModel)]="calfR"></ion-input>
                           </ion-item>
 
                           <ion-item>
@@ -256,6 +292,24 @@
               Cuello
               <ion-note item-end>{{neck}}</ion-note>
             </ion-item>
+
+            <ion-item>
+              <ion-icon name='analytics' item-start></ion-icon>
+              Pecho
+              <ion-note item-end>{{chest}}</ion-note>
+            </ion-item>
+
+            <ion-item>
+              <ion-icon name='analytics' item-start></ion-icon>
+              Bicep Izq
+              <ion-note item-end>{{armL}}</ion-note>
+            </ion-item>
+
+            <ion-item>
+              <ion-icon name='analytics' item-start></ion-icon>
+              Bicep Der
+              <ion-note item-end>{{armR}}</ion-note>
+            </ion-item>
         
             <ion-item>
               <ion-icon name='analytics' item-start></ion-icon>
@@ -268,11 +322,35 @@
               Cadera
               <ion-note item-end>{{hip}}</ion-note>
             </ion-item>
+
+            <ion-item>
+              <ion-icon name='analytics' item-start></ion-icon>
+              Muslo Izq
+              <ion-note item-end>{{legL}}</ion-note>
+            </ion-item>
+
+            <ion-item>
+              <ion-icon name='analytics' item-start></ion-icon>
+              Muslo Der
+              <ion-note item-end>{{legR}}</ion-note>
+            </ion-item>
+
+            <ion-item>
+              <ion-icon name='analytics' item-start></ion-icon>
+              Pantorrilla Izq
+              <ion-note item-end>{{calfL}}</ion-note>
+            </ion-item>
+
+            <ion-item>
+              <ion-icon name='analytics' item-start></ion-icon>
+              Pantorrilla Der
+              <ion-note item-end>{{calfR}}</ion-note>
+            </ion-item>
         
             <ion-item>
               <ion-icon name='pulse' item-start></ion-icon>
               Actividad Fisica
-              <ion-note item-end>{{performance}}</ion-note>
+              <ion-note item-end>{{performance == 0 ? "Nada" : performance == 1 ? "Ligera" : performance == 2 ? "Moderada" : performance == 3 ? "Fuerte" : performance == 4 ? "Brutal" : perfomance }}</ion-note>
             </ion-item>
         
             <ion-item>

@@ -7,6 +7,8 @@ ion-slide{
 
 ion-slides { height: initial; }
 
+.slide-zoom { height: 90vh; }
+
 .item-input .label-md, .item-select .label-md, .item-datetime .label-md,  {
     color: initial;
 }
@@ -17,6 +19,7 @@ ion-slides { height: initial; }
 
 ion-list{
     padding: 35px 20px;
+    height: 55vh !important;
 }
 
 .result{
@@ -26,4 +29,10 @@ ion-list{
 
 ion-icon{
     color: #c7c7c7 !important;
+}
+
+.data{
+    height: 30vh !important;
+    padding-top: 0px;
+
 }

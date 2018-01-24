@@ -1,7 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Slides, LoadingController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Slides, LoadingController, AlertController } from 'ionic-angular';
 import { HomePage } from '../home/home';
 import { DatabaseProvider } from '../../providers/database/database';
+import { HttpClient } from '@angular/common/http';
 
 /**
  * Generated class for the CalculatorPage page.
@@ -31,6 +32,15 @@ export class CalculatorPage {
   neck: number;
   waist: number;
   hip: number;
+
+  legL: number;
+  legR: number;
+  calfL: number;
+  calfR: number;
+  armL: number;
+  armR: number;
+  chest: number;
+
   performance: number;
   foods: number;
   eat: string;
@@ -42,6 +52,12 @@ export class CalculatorPage {
   fat: number;
   imc: number;
   tmb: number;
+  data:any = {};
+
+  showResult = false;
+  showCalculate = false;
+  showLastPage = false;
+  person:any = {};
 
 
   constructor(
@@ -49,29 +65,10 @@ export class CalculatorPage {
     public navParams: NavParams,
     private database: DatabaseProvider,
     private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController,
+    public httpClient: HttpClient
     
-  ){
-  }
-
-  showResult = false;
-  showCalculate = false;
-  showLastPage = false;
-
-  createPerson(){
-
-    let loader = this.loadingCtrl.create({
-      content: "Espera...",
-      duration: 3000
-    });
-    loader.present();
-
-    this.database.CreatePerson("john", "10/Nov/1990", "male", "john.przmz@gmail.com",  "+56999202150", "Chile", 1).then((data) =>{
-      console.log(data);
-    }, (error) =>{
-      console.log(error);
-    });
-  }
-
+  ){}
   getPerson(){
     this.navCtrl.push('result-page');
     /*  this.database.GetAllPerson().then((data) =>{
@@ -80,6 +77,24 @@ export class CalculatorPage {
       console.log(error);
     })
     */
+  }
+
+  presentAlert(text) {
+    let alert = this.alertCtrl.create({
+      title: "Oops, datos incompletos.",
+      subTitle: "Falto completar: " + text.join(', ') + ".",
+      buttons: ['Ok']
+    });
+    alert.present();
+  }
+
+  alert(title, text) {
+    let alert = this.alertCtrl.create({
+      title: title,
+      subTitle: text,
+      buttons: ['Ok']
+    });
+    alert.present();
   }
 
   prevSlide() {
@@ -115,44 +130,79 @@ export class CalculatorPage {
   }
   
 
-  calculate() {
+  loading(){
     let loader = this.loadingCtrl.create({
       content: "Espera...",
       duration: 3000
     });
     loader.present();
+  }
+
+  calculate() {
+    this.loading();
     this.slides.lockSwipeToNext(false);
     this.showResult = true;
     this.showCalculate = false;
     this.nextSlide();
 
-    console.log(this.name);
-    console.log(this.birthday);
-    console.log(this.genre);
-    console.log(this.email);
-    console.log(this.phone);
-    console.log(this.country);
-    console.log(this.weight);
-    console.log(this.height);
-    console.log(this.neck);
-    console.log(this.waist);
-    console.log(this.hip);
-    console.log(this.performance);
-    console.log(this.foods);
-    console.log(this.eat);
-    console.log(this.diet);
-    console.log(this.supplements);
-    console.log(this.place);
-    console.log(this.injury);
+    let text = [];
 
+    console.log(this.diet);
+
+    if(this.name == undefined)
+      text.push("Nombre");
+    if(this.birthday == undefined)
+      text.push("Fecha de Nacimiento");
+    if(this.genre == undefined)
+      text.push("Genero");
+    if(this.email == undefined)
+      text.push("Email");
+    if(this.weight == undefined)
+      text.push("Peso");
+    if(this.height == undefined)
+      text.push("Altura");
+    if(this.neck == undefined)
+      text.push("Cuello");
+    if(this.waist == undefined)
+      text.push("Cadera");
+    if(this.chest == undefined)
+      text.push("Pecho");
+    if(this.armL == undefined)
+      text.push("Brazo Izq");
+    if(this.armR == undefined)
+      text.push("Brazo Der");
+    if(this.legL == undefined)
+      text.push("Pierna Izq");
+    if(this.legR == undefined)
+      text.push("Pierna Der");
+    if(this.calfL == undefined)
+      text.push("Pantorrilla Izq");
+    if(this.calfR == undefined)
+      text.push("Pantorrilla Der");
+    if(this.genre =="female" && this.hip == undefined)
+      text.push("Cadera");
+
+
+    if(this.performance == undefined)
+      text.push("Actividad Fisica");
+    if(this.foods == undefined)
+      text.push("Cantidad de comidas");
+    if(this.eat == undefined)
+      text.push("Comidas frecuentes");
+
+    if(text.length > 0){
+      /*this.presentAlert(text);
+      this.edit();
+      return false;*/
+    }
 
     /*  inicio calculos*/
     if(this.genre == 'male')
-      this.fat = 495 / (1.0324 - 0.19077*( Math.log(this.waist - this.neck)) + 0.15456*(Math.log(this.height))) - 450;
+      this.fat = Number((495 / (1.0324 - 0.19077*( Math.log(this.waist - this.neck)) + 0.15456*(Math.log(this.height))) - 450).toFixed(2));
     else
-      this.fat = 495 / (1.29579 - 0.35004*(Math.log(this.waist + this.hip - this.neck)) + 0.22100*(Math.log(this.height))) - 450;
+      this.fat = Number((495 / (1.29579 - 0.35004*(Math.log(this.waist + this.hip - this.neck)) + 0.22100*(Math.log(this.height))) - 450).toFixed(2));
 
-    this.imc = this.weight / Math.pow((this.height/100), 2);
+    this.imc = Number((this.weight / Math.pow((this.height/100), 2)).toFixed(0));
 
     var mb = (10 * this.weight) + (6.25 * this.height)  - (5 * this.getAge(this.birthday));
 
@@ -174,7 +224,7 @@ export class CalculatorPage {
     else if(p = 4)
       f = 1.9;
 
-    this.tmb = mb * f;
+    this.tmb = Number((mb * f).toFixed(2));
   }
 
   getAge(birthday){
@@ -188,6 +238,76 @@ export class CalculatorPage {
     this.showResult = false;
     this.slides.lockSwipeToPrev(false);
     this.slides.slideTo(0, 500);
+  }
+
+  save(){
+    var person:any = {};
+    var measures:any = {};
+
+    person.name = this.name;
+    person.birthday = this.birthday;
+    person.genre = this.genre;
+    person.phone = this.phone;
+    person.email = this.email;
+    person.country = this.country;
+
+    measures.weight = this.weight;
+    measures.height = this.height;
+    measures.neck = this.neck;
+    measures.chest = this.chest;
+    measures.armL = this.armL;
+    measures.armR = this.armR;
+    measures.waist = this.waist;
+    measures.hip = (this.hip == 0 || this.hip == undefined) ? 0 : this.hip;
+    measures.legL = this.legL;
+    measures.legR = this.legR;
+    measures.calfL = this.calfL;
+    measures.calfR = this.calfR;
+    measures.performance = this.performance;
+    measures.foods = this.foods;
+    measures.eat = this.eat;
+    measures.diet = (this.diet == 0 || this.diet == undefined) ? 0 : 1;
+    measures.supplements = (this.supplements == 0 || this.supplements == undefined) ? 0 : 1;
+    measures.place = (this.place == 0 || this.place == undefined) ? "Casa" : "Gym";
+    measures.injury = (this.injury == 0 || this.injury == undefined) ? 0 : 1;
+    measures.imc = this.imc;
+    measures.tmb = this.tmb;
+    measures.fat = this.fat;
+    person.measures = measures;
+
+    var link = 'http://www.definetucuerpo.com/calculator/api.php';
+    var myData = JSON.stringify({person: person});
+    
+    this.httpClient.post(link, myData)
+    .subscribe(data => {
+    this.data.response = data["_body"];
+    console.log(this.data);
+  }, error => {
+    console.log(error);
+    //this.saveLocal(person);
+    });
+  }
+
+
+  saveLocal(person){
+    let loader = this.loadingCtrl.create({
+      content: "Guardando en dispositivo...",
+      duration: 3000
+    });
+    loader.present();
+/*
+    this.database.CreatePerson(person).then((data) =>{
+      if(this.data.insertId >0){
+        this.alert("Dispositivo","se inserto persona " + this.data.insertId);
+        this.database.CreateMeasurement(this.data.insertId, person.measures).then((data) =>{
+          this.alert("Dispositivo", "Se inserto medidas: " + this.data.insertId);
+        }, (error) =>{
+          console.log(error);
+        });
+      }
+    }, (error) =>{
+      console.log(error);
+    });*/
   }
 
   ionViewDidLoad() {

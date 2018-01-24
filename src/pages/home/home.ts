@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, AlertController } from 'ionic-angular';
+import { DatabaseProvider } from '../../providers/database/database';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'page-home',
@@ -7,13 +9,29 @@ import { NavController } from 'ionic-angular';
 })
 export class HomePage {
 
-  constructor(public navCtrl: NavController) {
+  constructor(
+    public navCtrl: NavController,
+    private database: DatabaseProvider,
+    private alertCtrl: AlertController,
+    public httpClient: HttpClient
+    
+  ) {
     
   }
 
   calculate() {
     this.navCtrl.push('calculator-page');
  }
+
+ upload() {
+   this.database.GetAllPerson().then((data) =>{
+    
+   },
+    (error) =>{
+
+    });
+
+}
 
  ionViewWillEnter() {
   let tabs = document.querySelectorAll('.tabbar');
