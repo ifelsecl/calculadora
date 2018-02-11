@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController } from 'ionic-angular';
+import { NavController, AlertController, LoadingController } from 'ionic-angular';
 import { DatabaseProvider } from '../../providers/database/database';
 import { HttpClient } from '@angular/common/http';
 
@@ -13,10 +13,20 @@ export class HomePage {
     public navCtrl: NavController,
     private database: DatabaseProvider,
     private alertCtrl: AlertController,
-    public httpClient: HttpClient
+    public httpClient: HttpClient,
+    private loadingCtrl: LoadingController
     
   ) {
     
+  }
+
+  alert(title, text) {
+    let alert = this.alertCtrl.create({
+      title: title,
+      subTitle: text,
+      buttons: ['Ok']
+    });
+    alert.present();
   }
 
   calculate() {
@@ -24,8 +34,65 @@ export class HomePage {
  }
 
  upload() {
-   this.database.GetAllPerson().then((data) =>{
-    
+    let done= false;
+    let fall = false;
+
+    let loader = this.loadingCtrl.create({
+      content: "Sincronizando..."
+    });
+    loader.present();
+
+    this.database.GetAllPerson().then((data:any) =>{
+      var link = 'http://www.definetucuerpo.com/calculator/api.php';
+      if(data.length > 0){
+        for (var i=0; i < data.length;i++){
+          let person = data[i];
+          let measure:any = {};
+      
+          this.database.GetPersonMeasure(person.person_id).then((data) =>{
+            person.measures = data;
+            console.log(person);
+            var myData = JSON.stringify({person: person});
+            this.httpClient.post(link, myData)
+              .subscribe((data) => {
+              console.log(data);
+              if(data == 1){
+                  this.database.DeletePerson(person.person_id).then((data:any) =>{
+                    console.log(data);
+                  }, error =>{
+                    console.log(error);
+                  });
+                  this.database.DeleteMeasures(person.person_id).then((data:any) =>{
+                    console.log(data);
+                  }, error =>{
+                    console.log(error);
+                  });
+              }
+              else{
+                this.alert("Error!", data);
+              }
+            }, error => {
+              fall = true;
+              this.alert("Error!", "Ouch, debes reintentar hubó un problema: "  + error.text);
+              console.log(error);
+              });
+          }, (error) =>{
+            console.log(error);
+          });
+
+          if ( i == data.length - 1 ){
+            loader.dismiss();
+            this.alert("Finalizado", "La sincronziacion ha finalizado.");
+              if(fall)
+                this.alert("Aviso", "Algunos registros quedaron pendientes por sincronizar, reintenta mas tarde.");    
+          }
+
+        }
+    }else {
+      this.alert("Okey", "No tienes nada pendiente por sincronizar, relax.");
+      loader.dismiss();
+
+    }
    },
     (error) =>{
 

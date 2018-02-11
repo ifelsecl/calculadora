@@ -52,7 +52,9 @@ export class CalculatorPage {
   fat: number;
   imc: number;
   tmb: number;
-  data:any = {};
+  data = {};
+
+  isSaveEnabled:boolean = true;
 
   showResult = false;
   showCalculate = false;
@@ -71,12 +73,11 @@ export class CalculatorPage {
   ){}
   getPerson(){
     this.navCtrl.push('result-page');
-    /*  this.database.GetAllPerson().then((data) =>{
+      this.database.GetAllPerson().then((data) =>{
       console.log(data);
     }, (error) =>{
       console.log(error);
-    })
-    */
+    });
   }
 
   presentAlert(text) {
@@ -102,7 +103,7 @@ export class CalculatorPage {
     if(currentIndex >= 1)
       this.slides.slideTo(currentIndex - 1, 500);
     else
-    this.navCtrl.push(HomePage);
+      this.navCtrl.push(HomePage);
   }
 
   nextSlide() {
@@ -146,9 +147,6 @@ export class CalculatorPage {
     this.nextSlide();
 
     let text = [];
-
-    console.log(this.diet);
-
     if(this.name == undefined)
       text.push("Nombre");
     if(this.birthday == undefined)
@@ -191,20 +189,21 @@ export class CalculatorPage {
       text.push("Comidas frecuentes");
 
     if(text.length > 0){
-      /*this.presentAlert(text);
+      this.presentAlert(text);
       this.edit();
-      return false;*/
+      return false;
     }
+
+    var factor = 0;
+    var age = this.getAge(this.birthday);
 
     /*  inicio calculos*/
     if(this.genre == 'male')
-      this.fat = Number((495 / (1.0324 - 0.19077*( Math.log(this.waist - this.neck)) + 0.15456*(Math.log(this.height))) - 450).toFixed(2));
-    else
-      this.fat = Number((495 / (1.29579 - 0.35004*(Math.log(this.waist + this.hip - this.neck)) + 0.22100*(Math.log(this.height))) - 450).toFixed(2));
+      factor = 1;
 
-    this.imc = Number((this.weight / Math.pow((this.height/100), 2)).toFixed(0));
-
-    var mb = (10 * this.weight) + (6.25 * this.height)  - (5 * this.getAge(this.birthday));
+    this.imc = this.weight / Math.pow((this.height/100), 2);
+    this.fat = (1.2 * this.imc) + (0.23 * age - 10.8 * factor - 5.4);
+    var mb = (10 * this.weight) + (6.25 * this.height)  - (5 * age);
 
     if(this.genre == 'male')
       mb = mb + 5;
@@ -241,6 +240,7 @@ export class CalculatorPage {
   }
 
   save(){
+    this.isSaveEnabled = false;
     var person:any = {};
     var measures:any = {};
 
@@ -278,36 +278,44 @@ export class CalculatorPage {
     var link = 'http://www.definetucuerpo.com/calculator/api.php';
     var myData = JSON.stringify({person: person});
     
-    this.httpClient.post(link, myData)
+  /*  this.httpClient.post(link, myData)
     .subscribe(data => {
     this.data.response = data["_body"];
     console.log(this.data);
   }, error => {
     console.log(error);
     //this.saveLocal(person);
-    });
+    });*/
+
+    this.saveLocal(person);
   }
 
 
   saveLocal(person){
+    console.log(person);
     let loader = this.loadingCtrl.create({
       content: "Guardando en dispositivo...",
-      duration: 3000
+      duration: 2000
     });
     loader.present();
-/*
-    this.database.CreatePerson(person).then((data) =>{
-      if(this.data.insertId >0){
-        this.alert("Dispositivo","se inserto persona " + this.data.insertId);
-        this.database.CreateMeasurement(this.data.insertId, person.measures).then((data) =>{
-          this.alert("Dispositivo", "Se inserto medidas: " + this.data.insertId);
+    var personId = 0;
+    var measureId = 0;
+    this.database.CreatePerson(person).then((data:any) =>{
+     this.navCtrl.push(HomePage);
+     personId = data.insertId;
+      if(data.insertId > 0){
+        this.database.CreateMeasurement(data.insertId, person.measures).then((data:any) =>{
+          measureId = data.insertId;
+          this.alert("Exitoso!", "Se ha guardado en el dispositivo, recuerda sincronizar mas tarde.");
+          this.navCtrl.push(HomePage);
         }, (error) =>{
+          this.alert("Error", "Ouch, hubó un problema: " + error);
           console.log(error);
         });
       }
     }, (error) =>{
       console.log(error);
-    });*/
+    });
   }
 
   ionViewDidLoad() {

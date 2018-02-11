@@ -25,7 +25,7 @@ export class DatabaseProvider {
         db.executeSql("CREATE TABLE IF NOT EXISTS person (person_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, birthday TEXT, genre TEXT, email TEXT, phone TEXT, country TEXT)", []);
         db.executeSql("CREATE TABLE IF NOT EXISTS measures (measures_id INTEGER PRIMARY KEY AUTOINCREMENT, person_id INTEGER, weight INTEGER, height INTEGER, neck INTEGER, "+
           "chest INTEGER, armL INTEGER, armR INTEGER, legL INTEGER, legR INTEGER, calfL INTEGER, calfR INTEGER, waist INTEGER, hip INTEGER, performance INTEGER, foods INTEGER, "+
-          "diet INTEGER, eat TEXT, place TEXT, injury INTEGER, supplements INTEGER "+
+          "diet INTEGER, eat TEXT, place TEXT, injury INTEGER, supplements INTEGER, imc TEXT, tmb TEXT, fat TEXT "+
           ")", []);
         this.isOpen = true;
       }).catch((error) => {
@@ -37,7 +37,7 @@ export class DatabaseProvider {
   CreatePerson(person){
     return new Promise ((resolve, reject) => {
       let sql = "INSERT INTO person (name, birthday, genre, email, phone, country) VALUES (?, ?, ?, ?, ?, ?)";
-      this.db.executeSql(sql, [person.name, person.birthday, person.genre, person.phone, person.country]).then((data) =>{
+      this.db.executeSql(sql, [person.name, person.birthday, person.genre, person.email, person.phone, person.country]).then((data) =>{
         resolve(data);
       }, (error) => {
         reject(error);
@@ -47,9 +47,31 @@ export class DatabaseProvider {
 
   CreateMeasurement(personId, measure){
     return new Promise ((resolve, reject) => {
-      let sql = "INSERT INTO measurement (person_id, weight, height, neck, chest, armL, armR, legL, legR, calfL, calfR, waist, hip, performance, foods, place, injury, supplements, diet) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      let sql = "INSERT INTO measures (person_id, weight, height, neck, chest, armL, armR, legL, legR, calfL, calfR, waist, hip, performance, foods, place, injury, supplements, diet, eat, imc, tmb, fat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
       this.db.executeSql(sql, [personId, measure.weight, measure.height, measure.neck, measure.chest, measure.armL, measure.armR, measure.legL, measure.legR, measure.calfL, measure.calfR, measure.waist, measure.hip, measure.performance, measure.foods,
-                              measure.place, measure.injury, measure.supplements, measure.diet]).then((data) =>{
+                              measure.place, measure.injury, measure.supplements, measure.diet, measure.eat, measure.imc, measure.tmb, measure.fat]).then((data) =>{
+        resolve(data);
+      }, (error) => {
+        reject(error);
+      });
+    });
+  }
+
+  DeletePerson(personId){
+    return new Promise ((resolve, reject) => {
+      let sql = "DELETE FROM person where person_id = ?";
+      this.db.executeSql(sql, [personId]).then((data) =>{
+        resolve(data);
+      }, (error) => {
+        reject(error);
+      });
+    });
+  }
+
+  DeleteMeasures(personId){
+    return new Promise ((resolve, reject) => {
+      let sql = "DELETE FROM measures where person_id = ?";
+      this.db.executeSql(sql, [personId]).then((data) =>{
         resolve(data);
       }, (error) => {
         reject(error);
@@ -70,7 +92,7 @@ export class DatabaseProvider {
               genre: data.rows.item(i).genre,
               email: data.rows.item(i).email,
               country: data.rows.item(i).country,
-              supplements: data.rows.item(i).supplements
+              phone: data.rows.item(i).phone
             });            
           }          
         }
@@ -93,8 +115,7 @@ export class DatabaseProvider {
               birthday: data.rows.item(i).birthday,
               genre: data.rows.item(i).genre,
               email: data.rows.item(i).email,
-              country: data.rows.item(i).country,
-              supplements: data.rows.item(i).supplements
+              country: data.rows.item(i).country
             });            
           }          
         }
@@ -108,38 +129,11 @@ export class DatabaseProvider {
   GetPersonMeasure(id){
     return new Promise ((resolve, reject) => {
       this.db.executeSql("SELECT * FROM measures where person_id = ?", [id]).then((data) => {
-        let arrayUsers = [];
+        let measure = {};
         if (data.rows.length > 0) {
-          for (var i = 0; i < data.rows.length; i++) {
-            arrayUsers.push({
-              measure_id: data.rows.item(i).measure_id,
-              person_id: data.rows.item(i).person_id,
-              weight: data.rows.item(i).weight,
-              height: data.rows.item(i).height,
-              neck: data.rows.item(i).neck,
-              armL: data.rows.item(i).armL,
-              armR: data.rows.item(i).armR,
-              chest: data.rows.item(i).chest,
-              legL: data.rows.item(i).legL,
-              legR: data.rows.item(i).legR,
-              calfL: data.rows.item(i).calfL,
-              calfR: data.rows.item(i).calfR,
-              waist: data.rows.item(i).waist,
-              hip: data.rows.item(i).hip,
-              eat: data.rows.item(i).eat,
-              foods: data.rows.item(i).foods,
-              diet: data.rows.item(i).diet,
-              place: data.rows.item(i).place,
-              supplements: data.rows.item(i).supplements,
-              performance: data.rows.item(i).name,
-              injury: data.rows.item(i).birthday,
-              imc: data.rows.item(i).genre,
-              tmb: data.rows.item(i).email,
-              fat: data.rows.item(i).country
-            });            
-          }          
+          measure = data.rows.item(0);          
         }
-        resolve(arrayUsers);
+        resolve(measure);
       }, (error) => {
         reject(error);
       })

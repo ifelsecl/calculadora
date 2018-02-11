@@ -28,7 +28,7 @@
           <button ion-button icon-only (click)="calculate(ngForm)" *ngIf="showCalculate">
               Calcular
             </button>
-          <button ion-button icon-only (click)="save()" *ngIf="showResult">
+          <button ion-button icon-only (click)="save()" *ngIf="showResult" [disabled]="!isSaveEnabled">
             Guardar
           </button>
         </ion-buttons>
